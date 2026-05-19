@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+﻿import { cn } from "@/lib/utils";
 
 export function StatTile({
   label,
@@ -12,12 +12,12 @@ export function StatTile({
   return (
     <div
       className={cn(
-        "rounded-lg border bg-white p-4 shadow-card",
-        tone === "alert" ? "border-alert-ring" : "border-ink-200",
+        "rounded-lg border bg-surface p-4 shadow-card",
+        tone === "alert" ? "border-alert-ring" : "border-line",
       )}
     >
-      <div className="text-xs uppercase tracking-wider text-ink-500">{label}</div>
-      <div className={cn("mt-1 text-2xl font-semibold", tone === "alert" ? "text-alert" : "text-ink-900")}>
+      <div className="text-xs uppercase tracking-wider text-muted">{label}</div>
+      <div className={cn("mt-1 text-2xl font-semibold", tone === "alert" ? "text-alert" : "text-primary")}>
         {value}
       </div>
     </div>

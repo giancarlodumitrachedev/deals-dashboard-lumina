@@ -2,22 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
-body {
-  background: #fafafa;
-  color: #171717;
-  font-feature-settings: "cv11", "ss01";
+@layer base {
+  :root {
+    --bg-base: 250 250 250;          /* page background */
+    --bg-surface: 255 255 255;       /* cards */
+    --bg-surface-2: 248 248 248;     /* subtle/hover */
+    --border: 230 230 230;
+    --text-primary: 23 23 23;
+    --text-muted: 115 115 115;
+    --text-faint: 163 163 163;
+  }
+  .dark {
+    --bg-base: 10 10 10;
+    --bg-surface: 23 23 23;
+    --bg-surface-2: 38 38 38;
+    --border: 64 64 64;
+    --text-primary: 248 248 248;
+    --text-muted: 163 163 163;
+    --text-faint: 115 115 115;
+  }
+
+  html, body {
+    background: rgb(var(--bg-base));
+    color: rgb(var(--text-primary));
+    font-feature-settings: "cv11", "ss01";
+  }
 }
 
 /* Subtle, minimal scrollbars */
-*::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
+*::-webkit-scrollbar { width: 10px; height: 10px; }
 *::-webkit-scrollbar-thumb {
-  background: #e6e6e6;
+  background: rgb(var(--border));
   border-radius: 9999px;
 }
-*::-webkit-scrollbar-thumb:hover {
-  background: #d4d4d4;
-}
+*::-webkit-scrollbar-thumb:hover { background: rgb(var(--text-faint)); }

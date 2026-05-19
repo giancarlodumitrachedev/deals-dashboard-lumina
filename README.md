@@ -8,11 +8,21 @@ UI in italiano, codice in inglese. Stack: Next.js 14 (App Router) · Supabase (P
 
 ```bash
 npm install
-cp .env.example .env.local   # già fornito
+cp .env.example .env.local
+# Aggiungi SUPABASE_SERVICE_ROLE_KEY (Project Settings -> API in Supabase)
 npm run dev
 ```
 
 Apri http://localhost:3000.
+
+### Env vars richieste
+
+| Variabile | Dove | Cosa fa |
+|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Vercel + .env.local | URL del progetto |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Vercel + .env.local | Publishable key (client) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Vercel + .env.local | **Server-only.** Necessaria per creare utenti, reset password ed eliminare account dall'admin. |
+| `CRON_SECRET` | Solo Supabase Edge Functions secrets | Token usato dal cron CRM per chiamare `follow-up-sweeper`. |
 
 ## Primo accesso
 

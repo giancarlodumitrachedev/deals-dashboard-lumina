@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -41,12 +41,12 @@ export function ManagerInbox({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-ink-900">Nuovi Lead</h1>
+        <h1 className="text-lg font-semibold text-primary">Nuovi Lead</h1>
         <Button onClick={() => setModalOpen(true)}>{UI.buttons.newLead}</Button>
       </div>
 
       {deals.length === 0 ? (
-        <Card className="p-8 text-center text-sm text-ink-500">{UI.empty.noLeads}</Card>
+        <Card className="p-8 text-center text-sm text-muted">{UI.empty.noLeads}</Card>
       ) : (
         <div className="grid grid-cols-1 gap-3">
           {deals.map((d) => (
@@ -85,8 +85,8 @@ function LeadRow({ deal, devs, sales }: { deal: Lead; devs: Staff[]; sales: Staf
     <Card className="p-4">
       <div className="grid grid-cols-1 gap-3 md:grid-cols-[2fr_1fr_1fr_auto] md:items-center">
         <div>
-          <div className="text-sm font-medium text-ink-900">{deal.client_name}</div>
-          <div className="text-xs text-ink-500">
+          <div className="text-sm font-medium text-primary">{deal.client_name}</div>
+          <div className="text-xs text-muted">
             {deal.phone_number ?? "—"} · {formatEuro(deal.value)}
           </div>
         </div>
@@ -160,7 +160,7 @@ function NewLeadModal({ open, onClose }: { open: boolean; onClose: () => void })
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={3}
-            className="w-full rounded-md border border-ink-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/10"
+            className="w-full rounded-md border border-line bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/10"
           />
         </Field>
         {err && (
@@ -184,7 +184,7 @@ function NewLeadModal({ open, onClose }: { open: boolean; onClose: () => void })
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-medium text-ink-700">{label}</span>
+      <span className="mb-1 block text-xs font-medium text-primary">{label}</span>
       {children}
     </label>
   );

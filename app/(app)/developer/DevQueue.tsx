@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -21,9 +21,9 @@ export function DevQueue({ deals }: { deals: DevDeal[] }) {
 
   return (
     <div className="mx-auto max-w-2xl space-y-3">
-      <h1 className="text-lg font-semibold text-ink-900">In Sviluppo</h1>
+      <h1 className="text-lg font-semibold text-primary">In Sviluppo</h1>
       {deals.length === 0 ? (
-        <Card className="p-8 text-center text-sm text-ink-500">{UI.empty.noDevQueue}</Card>
+        <Card className="p-8 text-center text-sm text-muted">{UI.empty.noDevQueue}</Card>
       ) : (
         deals.map((d) => <DevDealItem key={d.id} deal={d} />)
       )}
@@ -57,7 +57,7 @@ function DevDealItem({ deal }: { deal: DevDeal }) {
   return (
     <Card className="p-4">
       <div className="mb-2 flex items-center justify-between">
-        <h3 className="text-sm font-medium text-ink-900">{deal.client_name}</h3>
+        <h3 className="text-sm font-medium text-primary">{deal.client_name}</h3>
       </div>
       <div className="flex flex-col gap-2 sm:flex-row">
         <Input

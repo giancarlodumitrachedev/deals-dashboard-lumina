@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useFormState, useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/Button";
@@ -23,13 +23,13 @@ export function LoginForm() {
   return (
     <form action={formAction} className="space-y-4">
       <div>
-        <label className="mb-1 block text-xs font-medium text-ink-700">
+        <label className="mb-1 block text-xs font-medium text-primary">
           {UI.login.email}
         </label>
         <Input type="email" name="email" autoComplete="email" required />
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-ink-700">
+        <label className="mb-1 block text-xs font-medium text-primary">
           {UI.login.password}
         </label>
         <Input type="password" name="password" autoComplete="current-password" required />

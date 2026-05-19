@@ -11,7 +11,7 @@ export function Card({
   return (
     <div
       className={cn(
-        "rounded-lg border border-ink-200 bg-white shadow-card",
+        "rounded-lg border border-line bg-surface shadow-card dark:shadow-card-dark",
         className,
       )}
     >

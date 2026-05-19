@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -110,17 +110,17 @@ function KanbanColumn({
         <div
           ref={provided.innerRef}
           {...provided.droppableProps}
-          className={`flex min-h-[120px] flex-col gap-2 rounded-lg border border-ink-200 bg-white p-3 transition-colors ${
-            snapshot.isDraggingOver ? "border-ink-400 bg-ink-50" : ""
+          className={`flex min-h-[120px] flex-col gap-2 rounded-lg border border-line bg-surface p-3 transition-colors ${
+            snapshot.isDraggingOver ? "border-faint bg-base" : ""
           } ${busy ? "opacity-60" : ""}`}
         >
           <div className="mb-1 flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-ink-900">{DEAL_STATUS_LABEL[status]}</h2>
+            <h2 className="text-sm font-semibold text-primary">{DEAL_STATUS_LABEL[status]}</h2>
             <Badge tone="muted">{deals.length}</Badge>
           </div>
 
           {deals.length === 0 && (
-            <div className="rounded-md border border-dashed border-ink-200 px-3 py-6 text-center text-xs text-ink-400">
+            <div className="rounded-md border border-dashed border-line px-3 py-6 text-center text-xs text-faint">
               {UI.empty.noDeals}
             </div>
           )}
@@ -132,13 +132,13 @@ function KanbanColumn({
                   ref={prov.innerRef}
                   {...prov.draggableProps}
                   {...prov.dragHandleProps}
-                  className={`rounded-md border border-ink-200 bg-white p-3 text-left shadow-card transition ${
-                    snap.isDragging ? "ring-2 ring-ink-900/10" : ""
+                  className={`rounded-md border border-line bg-surface p-3 text-left shadow-card transition ${
+                    snap.isDragging ? "ring-2 ring-primary/10" : ""
                   }`}
                 >
                   <div className="mb-1 flex items-start justify-between gap-2">
-                    <span className="text-sm font-medium text-ink-900">{deal.client_name}</span>
-                    <span className="whitespace-nowrap text-xs text-ink-500">
+                    <span className="text-sm font-medium text-primary">{deal.client_name}</span>
+                    <span className="whitespace-nowrap text-xs text-muted">
                       {formatEuro(deal.value)}
                     </span>
                   </div>
@@ -147,7 +147,7 @@ function KanbanColumn({
                       href={deal.site_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block truncate text-xs text-ink-500 hover:text-ink-900"
+                      className="block truncate text-xs text-muted hover:text-primary"
                     >
                       {deal.site_url}
                     </a>

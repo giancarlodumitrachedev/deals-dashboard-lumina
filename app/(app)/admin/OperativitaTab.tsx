@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo } from "react";
 import { Card } from "@/components/ui/Card";
@@ -34,25 +34,25 @@ export function OperativitaTab({ deals }: { deals: AdminDealSummary[] }) {
       {DEAL_STATUSES.map((s) => (
         <Card key={s} className="flex flex-col gap-2 p-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-semibold uppercase tracking-wide text-ink-600">
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-muted">
               {DEAL_STATUS_LABEL[s]}
             </h3>
             <Badge tone="muted">{buckets[s].length}</Badge>
           </div>
           {buckets[s].length === 0 ? (
-            <div className="rounded-md border border-dashed border-ink-200 p-3 text-center text-xs text-ink-400">
+            <div className="rounded-md border border-dashed border-line p-3 text-center text-xs text-faint">
               —
             </div>
           ) : (
             buckets[s].slice(0, 6).map((d) => (
-              <div key={d.id} className="rounded-md border border-ink-100 bg-ink-50/50 p-2">
-                <div className="text-xs font-medium text-ink-900">{d.client_name}</div>
-                <div className="text-[11px] text-ink-500">{formatEuro(d.value)}</div>
+              <div key={d.id} className="rounded-md border border-line bg-surface-2 p-2">
+                <div className="text-xs font-medium text-primary">{d.client_name}</div>
+                <div className="text-[11px] text-muted">{formatEuro(d.value)}</div>
               </div>
             ))
           )}
           {buckets[s].length > 6 && (
-            <div className="text-center text-[11px] text-ink-400">
+            <div className="text-center text-[11px] text-faint">
               +{buckets[s].length - 6}
             </div>
           )}
