@@ -1,17 +1,25 @@
-﻿"use client";
+"use client";
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { DragDropContext, Droppable, Draggable, type DropResult } from "@hello-pangea/dnd";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
+import { Select } from "@/components/ui/Select";
 import { DEAL_STATUS_LABEL, UI } from "@/lib/i18n/it";
-import { SALES_KANBAN_COLUMNS, type DealStatus, type DealWithRelations, type FollowUp } from "@/lib/types/domain";
+import {
+  SALES_KANBAN_COLUMNS,
+  SALES_TERMINAL_COLUMNS,
+  type DealStatus,
+  type DealWithRelations,
+  type FollowUp,
+} from "@/lib/types/domain";
 import { formatEuro, isTodayOrPast } from "@/lib/utils";
 import { ActionsToday } from "./ActionsToday";
 import { StatTile } from "./StatTile";
 import { useRealtimeDeals } from "@/components/useRealtimeDeals";
+
+type SortKey = "recent" | "alpha" | "job";
 
 interface Props {
   deals: DealWithRelations[];
@@ -20,11 +28,35 @@ interface Props {
   pendingCommissions: number;
 }
 
+const SORT_LABELS: Record<SortKey, string> = {
+  recent: "Data aggiunta",
+  alpha: "Ordine alfabetico",
+  job: "Settore / lavoro",
+};
+
+function sortDeals(deals: DealWithRelations[], key: SortKey): DealWithRelations[] {
+  const copy = [...deals];
+  switch (key) {
+    case "alpha":
+      return copy.sort((a, b) => a.client_name.localeCompare(b.client_name, "it"));
+    case "job":
+      return copy.sort((a, b) =>
+        (a.job ?? "").localeCompare(b.job ?? "", "it") ||
+        a.client_name.localeCompare(b.client_name, "it"),
+      );
+    case "recent":
+    default:
+      return copy.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  }
+}
+
 export function SalesDashboard({ deals, followUps, conversionRate, pendingCommissions }: Props) {
   const router = useRouter();
   useRealtimeDeals(() => router.refresh());
 
   const [busy, setBusy] = useState(false);
+  const [sortKey, setSortKey] = useState<SortKey>("recent");
+
   const actionableFollowUps = useMemo(
     () => followUps.filter((f) => isTodayOrPast(f.scheduled_date)),
     [followUps],
@@ -32,17 +64,15 @@ export function SalesDashboard({ deals, followUps, conversionRate, pendingCommis
 
   const byColumn = useMemo(() => {
     const buckets: Record<DealStatus, DealWithRelations[]> = {
-      new_lead: [],
-      in_development: [],
-      ready_to_pitch: [],
-      decision_pending: [],
-      payment_pending: [],
-      won: [],
-      cancelled: [],
+      new_lead: [], in_development: [], ready_to_pitch: [],
+      decision_pending: [], payment_pending: [], won: [], cancelled: [],
     };
     for (const d of deals) buckets[d.status].push(d);
+    for (const k of Object.keys(buckets) as DealStatus[]) {
+      buckets[k] = sortDeals(buckets[k], sortKey);
+    }
     return buckets;
-  }, [deals]);
+  }, [deals, sortKey]);
 
   async function onDragEnd(result: DropResult) {
     if (!result.destination) return;
@@ -50,6 +80,10 @@ export function SalesDashboard({ deals, followUps, conversionRate, pendingCommis
     const from = result.source.droppableId as DealStatus;
     const to = result.destination.droppableId as DealStatus;
     if (from === to) return;
+    if (SALES_TERMINAL_COLUMNS.includes(from)) {
+      // Won/cancelled are final — no moving out.
+      return;
+    }
 
     setBusy(true);
     const res = await fetch(`/api/deals/${dealId}/status`, {
@@ -79,15 +113,26 @@ export function SalesDashboard({ deals, followUps, conversionRate, pendingCommis
 
       <ActionsToday deals={deals} followUps={actionableFollowUps} />
 
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-semibold text-primary">Pipeline</h2>
+        <label className="flex items-center gap-2 text-xs text-muted">
+          Ordina per
+          <Select
+            value={sortKey}
+            onChange={(e) => setSortKey(e.target.value as SortKey)}
+            className="h-8 w-44 text-xs"
+          >
+            {(Object.keys(SORT_LABELS) as SortKey[]).map((k) => (
+              <option key={k} value={k}>{SORT_LABELS[k]}</option>
+            ))}
+          </Select>
+        </label>
+      </div>
+
       <DragDropContext onDragEnd={onDragEnd}>
-        <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
           {SALES_KANBAN_COLUMNS.map((status) => (
-            <KanbanColumn
-              key={status}
-              status={status}
-              deals={byColumn[status]}
-              busy={busy}
-            />
+            <KanbanColumn key={status} status={status} deals={byColumn[status]} busy={busy} />
           ))}
         </section>
       </DragDropContext>
@@ -104,18 +149,21 @@ function KanbanColumn({
   deals: DealWithRelations[];
   busy: boolean;
 }) {
+  const terminal = SALES_TERMINAL_COLUMNS.includes(status);
   return (
-    <Droppable droppableId={status}>
+    <Droppable droppableId={status} isDropDisabled={false}>
       {(provided, snapshot) => (
         <div
           ref={provided.innerRef}
           {...provided.droppableProps}
-          className={`flex min-h-[120px] flex-col gap-2 rounded-lg border border-line bg-surface p-3 transition-colors ${
-            snapshot.isDraggingOver ? "border-faint bg-base" : ""
-          } ${busy ? "opacity-60" : ""}`}
+          className={`flex min-h-[120px] flex-col gap-2 rounded-lg border p-3 transition-colors ${
+            terminal ? "border-line bg-surface-2" : "border-line bg-surface"
+          } ${snapshot.isDraggingOver ? "border-faint bg-base" : ""} ${busy ? "opacity-60" : ""}`}
         >
           <div className="mb-1 flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-primary">{DEAL_STATUS_LABEL[status]}</h2>
+            <h2 className={`text-sm font-semibold ${status === "won" ? "text-emerald-600 dark:text-emerald-400" : status === "cancelled" ? "text-alert" : "text-primary"}`}>
+              {DEAL_STATUS_LABEL[status]}
+            </h2>
             <Badge tone="muted">{deals.length}</Badge>
           </div>
 
@@ -126,7 +174,7 @@ function KanbanColumn({
           )}
 
           {deals.map((deal, idx) => (
-            <Draggable key={deal.id} draggableId={deal.id} index={idx}>
+            <Draggable key={deal.id} draggableId={deal.id} index={idx} isDragDisabled={terminal}>
               {(prov, snap) => (
                 <div
                   ref={prov.innerRef}
@@ -134,14 +182,15 @@ function KanbanColumn({
                   {...prov.dragHandleProps}
                   className={`rounded-md border border-line bg-surface p-3 text-left shadow-card transition ${
                     snap.isDragging ? "ring-2 ring-primary/10" : ""
-                  }`}
+                  } ${terminal ? "cursor-default opacity-90" : "cursor-grab"}`}
                 >
                   <div className="mb-1 flex items-start justify-between gap-2">
                     <span className="text-sm font-medium text-primary">{deal.client_name}</span>
-                    <span className="whitespace-nowrap text-xs text-muted">
-                      {formatEuro(deal.value)}
-                    </span>
+                    <span className="whitespace-nowrap text-xs text-muted">{formatEuro(deal.value)}</span>
                   </div>
+                  {deal.job && (
+                    <div className="text-[11px] text-faint">{deal.job}</div>
+                  )}
                   {deal.site_url && (
                     <a
                       href={deal.site_url}
@@ -162,5 +211,3 @@ function KanbanColumn({
     </Droppable>
   );
 }
-
-export { Card };

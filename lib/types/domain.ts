@@ -26,7 +26,12 @@ export const SALES_KANBAN_COLUMNS: DealStatus[] = [
   "ready_to_pitch",
   "decision_pending",
   "payment_pending",
+  "won",
+  "cancelled",
 ];
+
+// End states: cards here cannot be dragged elsewhere by a sales agent.
+export const SALES_TERMINAL_COLUMNS: DealStatus[] = ["won", "cancelled"];
 
 export interface Profile {
   id: string;
@@ -41,6 +46,9 @@ export interface Deal {
   id: string;
   client_name: string;
   phone_number: string | null;
+  email: string | null;
+  website: string | null;
+  job: string | null;
   value: number;
   status: DealStatus;
   assigned_sales_id: string | null;
@@ -50,6 +58,18 @@ export interface Deal {
   created_by: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export type ReportType = "bug" | "improvement";
+export type ReportSeverity = "low" | "medium" | "high" | "critical";
+
+export interface Report {
+  id: string;
+  type: ReportType;
+  severity: ReportSeverity;
+  description: string;
+  reporter_id: string | null;
+  created_at: string;
 }
 
 export interface DealWithRelations extends Deal {

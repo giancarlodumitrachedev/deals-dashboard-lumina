@@ -13,10 +13,10 @@ export default async function SalesPage() {
     supabase
       .from("deals")
       .select(
-        "id, client_name, phone_number, value, status, assigned_sales_id, assigned_dev_id, site_url, notes, created_at, updated_at",
+        "id, client_name, phone_number, email, website, job, value, status, assigned_sales_id, assigned_dev_id, site_url, notes, created_at, updated_at",
       )
       .eq("assigned_sales_id", session.userId)
-      .in("status", ["ready_to_pitch", "decision_pending", "payment_pending"])
+      .in("status", ["ready_to_pitch", "decision_pending", "payment_pending", "won", "cancelled"])
       .order("updated_at", { ascending: false }),
     supabase
       .from("follow_ups")

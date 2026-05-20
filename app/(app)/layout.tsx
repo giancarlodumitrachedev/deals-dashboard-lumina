@@ -3,6 +3,7 @@ import { logout } from "@/app/login/actions";
 import { ROLE_LABEL, UI } from "@/lib/i18n/it";
 import { HandoffBanner } from "@/components/HandoffBanner";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { ReportButton } from "@/components/ReportButton";
 import { Sidebar } from "@/components/Sidebar";
 import Link from "next/link";
 
@@ -26,6 +27,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
               {ROLE_LABEL[session.role]} · {session.fullName}
             </div>
             <div className="ml-auto flex items-center gap-3">
+              <ReportButton />
               <ThemeToggle />
               <form action={logout}>
                 <button

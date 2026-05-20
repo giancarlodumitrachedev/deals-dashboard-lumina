@@ -18,17 +18,37 @@ const NAV: Record<UserRole, NavItem[]> = {
     { href: "/admin/users", label: "Utenti" },
     { href: "/admin/analytics", label: UI.nav.analitiche },
     { href: "/admin/commissions", label: UI.nav.commissioni },
+    { href: "/admin/reports", label: "Segnalazioni" },
+    { href: "/profile", label: "Profilo" },
   ],
   manager: [
     { href: "/manager", label: "Nuovi Lead" },
+    { href: "/me/analytics", label: UI.nav.analitiche },
+    { href: "/profile", label: "Profilo" },
   ],
-  developer: [{ href: "/developer", label: "In Sviluppo" }],
-  sales: [{ href: "/sales", label: "Pipeline" }],
+  developer: [
+    { href: "/developer", label: "In Sviluppo" },
+    { href: "/me/analytics", label: UI.nav.analitiche },
+    { href: "/profile", label: "Profilo" },
+  ],
+  sales: [
+    { href: "/sales", label: "Pipeline" },
+    { href: "/sales/commissions", label: UI.nav.commissioni },
+    { href: "/me/analytics", label: UI.nav.analitiche },
+    { href: "/profile", label: "Profilo" },
+  ],
 };
 
 export function Sidebar({ role }: { role: UserRole }) {
   const pathname = usePathname();
   const items = NAV[role];
+
+  // Pick the single best-matching item (longest prefix), so highlighting
+  // never gets "stuck" on a shorter parent path like /admin when on /admin/users.
+  const activeHref =
+    items
+      .filter((i) => pathname === i.href || pathname.startsWith(i.href + "/"))
+      .sort((a, b) => b.href.length - a.href.length)[0]?.href ?? "";
 
   return (
     <aside className="hidden w-56 shrink-0 border-r border-line bg-surface lg:flex lg:flex-col">
@@ -39,10 +59,11 @@ export function Sidebar({ role }: { role: UserRole }) {
       <nav className="flex-1 px-3 py-4">
         <ul className="space-y-0.5">
           {items.map((it) => {
-            const active = pathname === it.href || pathname.startsWith(it.href + "/");
+            const active = it.href === activeHref;
             return (
               <li key={it.href}>
                 <Link
+                  prefetch={false}
                   href={it.href}
                   className={cn(
                     "flex items-center rounded-md px-3 py-2 text-sm transition-colors",

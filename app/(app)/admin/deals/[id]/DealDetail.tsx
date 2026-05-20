@@ -47,6 +47,9 @@ export function DealDetail({
   const [form, setForm] = useState({
     client_name: deal.client_name,
     phone_number: deal.phone_number ?? "",
+    email: deal.email ?? "",
+    website: deal.website ?? "",
+    job: deal.job ?? "",
     value: String(deal.value),
     status: deal.status,
     site_url: deal.site_url ?? "",
@@ -67,6 +70,9 @@ export function DealDetail({
     const payload = {
       client_name: form.client_name.trim(),
       phone_number: form.phone_number.trim() || null,
+      email: form.email.trim() || null,
+      website: form.website.trim() || null,
+      job: form.job.trim() || null,
       value: Number(form.value) || 0,
       status: form.status,
       site_url: form.site_url.trim() || null,
@@ -137,7 +143,26 @@ export function DealDetail({
                 <Input value={form.client_name} onChange={(e) => update("client_name", e.target.value)} />
               </Field>
               <Field label="Telefono">
-                <Input value={form.phone_number} onChange={(e) => update("phone_number", e.target.value)} />
+                <Input
+                  inputMode="tel"
+                  value={form.phone_number}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    const normalized = v.startsWith("+")
+                      ? "+" + v.slice(1).replace(/[^\d]/g, "")
+                      : v.replace(/[^\d]/g, "");
+                    update("phone_number", normalized);
+                  }}
+                />
+              </Field>
+              <Field label="Email">
+                <Input type="email" value={form.email} onChange={(e) => update("email", e.target.value)} />
+              </Field>
+              <Field label="Sito Web Attuale">
+                <Input type="url" value={form.website} onChange={(e) => update("website", e.target.value)} placeholder="https://..." />
+              </Field>
+              <Field label="Settore / Lavoro">
+                <Input value={form.job} onChange={(e) => update("job", e.target.value)} />
               </Field>
               <Field label="Valore (€)">
                 <Input
