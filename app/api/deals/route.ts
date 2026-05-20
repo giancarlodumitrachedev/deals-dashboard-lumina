@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { requireSession } from "@/lib/auth";
-import { can } from "@/lib/permissions";
 import { createDealsBulkSchema } from "@/lib/validators";
 
 export async function POST(req: Request) {
   const session = await requireSession();
-  if (!can(session.role, "create_lead")) {
+  if (!session.can("create_lead")) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
   const body = await req.json().catch(() => null);

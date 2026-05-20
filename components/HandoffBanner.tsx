@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { UI } from "@/lib/i18n/it";
-import type { Deal } from "@/lib/types/domain";
+import { DEFAULT_WHATSAPP_TEMPLATE, renderTemplate } from "@/lib/template";
 
 interface ReadyDeal {
   id: string;
@@ -12,13 +12,24 @@ interface ReadyDeal {
 }
 
 // Banner shown to a Sales agent whenever a deal assigned to them is in `ready_to_pitch`.
-// Includes one-click copyable WhatsApp message.
+// Includes one-click copyable WhatsApp message (template configurable in admin settings).
 export function HandoffBanner({ userId }: { userId: string }) {
   const [deals, setDeals] = useState<ReadyDeal[]>([]);
   const [copied, setCopied] = useState<string | null>(null);
+  const [template, setTemplate] = useState<string>(DEFAULT_WHATSAPP_TEMPLATE);
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient();
+
+    const loadTemplate = async () => {
+      const { data } = await supabase
+        .from("app_settings")
+        .select("value")
+        .eq("key", "whatsapp_template")
+        .maybeSingle();
+      if (data?.value) setTemplate(data.value as string);
+    };
+    loadTemplate();
 
     const load = async () => {
       const { data } = await supabase
@@ -72,7 +83,7 @@ export function HandoffBanner({ userId }: { userId: string }) {
                 onClick={async () => {
                   try {
                     await navigator.clipboard.writeText(
-                      UI.notifications.whatsappTemplate(d.client_name, d.site_url!),
+                      renderTemplate(template, { client: d.client_name, url: d.site_url! }),
                     );
                     setCopied(d.id);
                     setTimeout(() => setCopied((c) => (c === d.id ? null : c)), 2000);

@@ -54,11 +54,15 @@ export async function POST(req: Request, ctx: { params: { id: string } }) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  // Transition check
-  const allowed = ROLE_TRANSITIONS[session.role][deal.status as DealStatus] ?? [];
   const target = parsed.data.status as DealStatus;
-  if (!allowed.includes(target)) {
-    return NextResponse.json({ error: "Transizione non consentita" }, { status: 403 });
+
+  // Admin has full manual control over the board (DB triggers still enforce
+  // invariants such as requiring a site_url before ready_to_pitch).
+  if (session.role !== "admin") {
+    const allowed = ROLE_TRANSITIONS[session.role][deal.status as DealStatus] ?? [];
+    if (!allowed.includes(target)) {
+      return NextResponse.json({ error: "Transizione non consentita" }, { status: 403 });
+    }
   }
 
   const { error: updErr } = await supabase

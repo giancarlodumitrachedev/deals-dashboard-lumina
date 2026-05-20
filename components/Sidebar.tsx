@@ -5,50 +5,12 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import type { UserRole } from "@/lib/types/domain";
 import { UI } from "@/lib/i18n/it";
-
-interface NavItem {
-  href: string;
-  label: string;
-}
-
-const NAV: Record<UserRole, NavItem[]> = {
-  admin: [
-    { href: "/admin", label: UI.nav.operativita },
-    { href: "/admin/deals", label: "Deal" },
-    { href: "/admin/users", label: "Utenti" },
-    { href: "/admin/analytics", label: UI.nav.analitiche },
-    { href: "/admin/commissions", label: UI.nav.commissioni },
-    { href: "/admin/reports", label: "Segnalazioni" },
-    { href: "/profile", label: "Profilo" },
-  ],
-  manager: [
-    { href: "/manager", label: "Nuovi Lead" },
-    { href: "/me/analytics", label: UI.nav.analitiche },
-    { href: "/profile", label: "Profilo" },
-  ],
-  developer: [
-    { href: "/developer", label: "In Sviluppo" },
-    { href: "/me/analytics", label: UI.nav.analitiche },
-    { href: "/profile", label: "Profilo" },
-  ],
-  sales: [
-    { href: "/sales", label: "Pipeline" },
-    { href: "/sales/commissions", label: UI.nav.commissioni },
-    { href: "/me/analytics", label: UI.nav.analitiche },
-    { href: "/profile", label: "Profilo" },
-  ],
-};
+import { NAV, activeNavHref } from "@/lib/nav";
 
 export function Sidebar({ role }: { role: UserRole }) {
   const pathname = usePathname();
   const items = NAV[role];
-
-  // Pick the single best-matching item (longest prefix), so highlighting
-  // never gets "stuck" on a shorter parent path like /admin when on /admin/users.
-  const activeHref =
-    items
-      .filter((i) => pathname === i.href || pathname.startsWith(i.href + "/"))
-      .sort((a, b) => b.href.length - a.href.length)[0]?.href ?? "";
+  const activeHref = activeNavHref(items, pathname);
 
   return (
     <aside className="hidden w-56 shrink-0 border-r border-line bg-surface lg:flex lg:flex-col">

@@ -28,12 +28,12 @@ export function Modal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      className="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
       onClick={onClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`w-full ${sizeClass} max-h-[90vh] overflow-auto rounded-lg border border-line bg-surface shadow-card dark:shadow-card-dark`}
+        className={`animate-scale-in w-full ${sizeClass} max-h-[90vh] overflow-auto rounded-lg border border-line bg-surface shadow-card dark:shadow-card-dark`}
       >
         <div className="flex items-center justify-between border-b border-line px-5 py-3">
           <h3 className="text-sm font-semibold text-primary">{title}</h3>

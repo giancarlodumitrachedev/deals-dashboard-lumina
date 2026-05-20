@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { requireSession } from "@/lib/auth";
-import { can } from "@/lib/permissions";
 
 export async function POST(_: Request, ctx: { params: { id: string } }) {
   const session = await requireSession();
-  if (!can(session.role, "mark_paid")) {
+  if (!session.can("mark_paid")) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
   const supabase = createSupabaseServerClient();

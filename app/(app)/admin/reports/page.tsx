@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { requireSession } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { ReportsAdmin } from "./ReportsAdmin";
+import { ReportsStats } from "./ReportsStats";
 import type { ReportType, ReportSeverity } from "@/lib/types/domain";
 
 export const dynamic = "force-dynamic";
@@ -37,6 +38,7 @@ export default async function ReportsPage() {
   return (
     <div className="space-y-4">
       <h1 className="text-lg font-semibold">Segnalazioni</h1>
+      <ReportsStats reports={reports} />
       <ReportsAdmin reports={reports} />
     </div>
   );

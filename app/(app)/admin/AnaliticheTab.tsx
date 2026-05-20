@@ -10,7 +10,18 @@ import { Card } from "@/components/ui/Card";
 import { DEAL_STATUS_LABEL } from "@/lib/i18n/it";
 import { DEAL_STATUSES, type DealStatus } from "@/lib/types/domain";
 import { formatEuro } from "@/lib/utils";
-import type { AdminDealSummary } from "./OperativitaTab";
+
+export interface AdminDealSummary {
+  id: string;
+  client_name: string;
+  value: number;
+  status: DealStatus;
+  assigned_sales_id: string | null;
+  assigned_dev_id: string | null;
+  site_url: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
 const STATUS_COLORS: Record<DealStatus, string> = {
   new_lead: "#737373",

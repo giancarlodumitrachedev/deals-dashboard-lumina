@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { requireSession } from "@/lib/auth";
-import { can } from "@/lib/permissions";
 import { updateCommissionSchema } from "@/lib/validators";
 
 export async function PATCH(req: Request, ctx: { params: { id: string } }) {
   const session = await requireSession();
-  if (!can(session.role, "mark_paid")) {
+  if (!session.can("mark_paid")) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
   const parsed = updateCommissionSchema.safeParse(await req.json().catch(() => null));
