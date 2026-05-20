@@ -99,5 +99,20 @@ export const changePasswordSchema = z.object({
 });
 
 export const updateOwnProfileSchema = z.object({
-  full_name: z.string().trim().min(2).max(120),
+  full_name: z.string().trim().min(2).max(120).optional(),
+  iban: z
+    .string()
+    .trim()
+    .transform((v) => v.replace(/\s+/g, "").toUpperCase())
+    .refine((v) => v === "" || /^[A-Z]{2}\d{2}[A-Z0-9]{10,30}$/.test(v), {
+      message: "IBAN non valido.",
+    })
+    .transform((v) => (v === "" ? null : v))
+    .nullable()
+    .optional(),
+  payment_method: z.string().trim().max(60).optional().nullable().transform((v) => (v ? v : v === "" ? null : v)),
+});
+
+export const updateCommissionSchema = z.object({
+  receipt_url: z.string().trim().url().max(500).nullable().optional(),
 });

@@ -10,13 +10,19 @@ export function ProfileEditor({
   fullName,
   email,
   role,
+  iban,
+  paymentMethod,
 }: {
   fullName: string;
   email: string;
   role: string;
+  iban: string;
+  paymentMethod: string;
 }) {
   const router = useRouter();
   const [name, setName] = useState(fullName);
+  const [ibanValue, setIbanValue] = useState(iban);
+  const [payMethod, setPayMethod] = useState(paymentMethod);
   const [pw, setPw] = useState("");
   const [pwConfirm, setPwConfirm] = useState("");
   const [busy, setBusy] = useState(false);
@@ -28,7 +34,11 @@ export function ProfileEditor({
     const res = await fetch("/api/profile", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ full_name: name.trim() }),
+      body: JSON.stringify({
+        full_name: name.trim(),
+        iban: ibanValue.trim(),
+        payment_method: payMethod.trim(),
+      }),
     });
     setBusy(false);
     if (!res.ok) {
@@ -79,6 +89,32 @@ export function ProfileEditor({
           <Button onClick={saveName} disabled={busy || name.trim().length < 2}>
             Salva
           </Button>
+        </div>
+      </Card>
+
+      <Card className="p-5">
+        <h2 className="mb-1 text-sm font-semibold">Dati di pagamento</h2>
+        <p className="mb-3 text-xs text-muted">
+          Usati dall&apos;amministrazione per liquidare le tue commissioni.
+        </p>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <Field label="IBAN">
+            <Input
+              value={ibanValue}
+              onChange={(e) => setIbanValue(e.target.value.toUpperCase())}
+              placeholder="IT60X0542811101000000123456"
+            />
+          </Field>
+          <Field label="Metodo preferito">
+            <Input
+              value={payMethod}
+              onChange={(e) => setPayMethod(e.target.value)}
+              placeholder="Bonifico / PayPal / Revolut…"
+            />
+          </Field>
+        </div>
+        <div className="mt-4">
+          <Button onClick={saveName} disabled={busy}>Salva</Button>
         </div>
       </Card>
 

@@ -24,7 +24,7 @@ export default async function SalesPage() {
       .eq("status", "pending"),
     supabase
       .from("commissions")
-      .select("id, deal_id, user_id, amount, status, paid_at, created_at")
+      .select("id, deal_id, user_id, amount, status, paid_at, receipt_url, created_at")
       .eq("user_id", session.userId),
   ]);
 

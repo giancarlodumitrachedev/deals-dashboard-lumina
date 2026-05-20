@@ -30,8 +30,9 @@ export const SALES_KANBAN_COLUMNS: DealStatus[] = [
   "cancelled",
 ];
 
-// End states: cards here cannot be dragged elsewhere by a sales agent.
-export const SALES_TERMINAL_COLUMNS: DealStatus[] = ["won", "cancelled"];
+// End state: cards here cannot be dragged elsewhere by a sales agent.
+// Cancelled is intentionally NOT terminal — agents can restore those deals.
+export const SALES_TERMINAL_COLUMNS: DealStatus[] = ["won"];
 
 export interface Profile {
   id: string;
@@ -39,6 +40,8 @@ export interface Profile {
   email: string;
   role_id: number;
   is_active: boolean;
+  iban: string | null;
+  payment_method: string | null;
   role?: { name: UserRole } | null;
 }
 
@@ -104,5 +107,6 @@ export interface Commission {
   amount: number;
   status: CommissionStatus;
   paid_at: string | null;
+  receipt_url: string | null;
   created_at: string;
 }

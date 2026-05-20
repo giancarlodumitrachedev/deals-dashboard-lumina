@@ -33,7 +33,7 @@ export default async function DealDetailPage({ params }: { params: { id: string 
         .order("step_number"),
       supabase
         .from("commissions")
-        .select("id, deal_id, user_id, amount, status, paid_at, created_at")
+        .select("id, deal_id, user_id, amount, status, paid_at, receipt_url, created_at")
         .eq("deal_id", params.id),
       supabase
         .from("profiles")

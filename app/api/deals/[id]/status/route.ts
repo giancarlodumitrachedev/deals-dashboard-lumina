@@ -13,17 +13,21 @@ const ROLE_TRANSITIONS: Record<UserRole, Partial<Record<DealStatus, DealStatus[]
     ready_to_pitch: ["decision_pending", "cancelled"],
     decision_pending: ["payment_pending", "cancelled"],
     payment_pending: ["won", "cancelled"],
-    won: [],
-    cancelled: [],
+    won: ["cancelled"],
+    // Cancelled is a free column: admins can restore to any active stage.
+    cancelled: ["ready_to_pitch", "decision_pending", "payment_pending", "in_development"],
   },
   manager: {
     new_lead: ["in_development", "cancelled"],
     in_development: ["cancelled"],
+    cancelled: ["in_development"],
   },
   sales: {
     ready_to_pitch: ["decision_pending", "cancelled"],
     decision_pending: ["payment_pending", "cancelled"],
     payment_pending: ["won", "cancelled"],
+    // Agents can pull a deal back out of Annullato.
+    cancelled: ["ready_to_pitch", "decision_pending", "payment_pending"],
   },
   developer: {},
 };

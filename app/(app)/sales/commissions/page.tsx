@@ -13,6 +13,7 @@ interface CommissionJoinRow {
   amount: number;
   status: "pending" | "paid";
   paid_at: string | null;
+  receipt_url: string | null;
   created_at: string;
   deal: { client_name: string } | { client_name: string }[] | null;
 }
@@ -24,7 +25,7 @@ export default async function SalesCommissionsPage() {
   const supabase = createSupabaseServerClient();
   const { data: raw } = await supabase
     .from("commissions")
-    .select("id, amount, status, paid_at, created_at, deal:deals(client_name)")
+    .select("id, amount, status, paid_at, receipt_url, created_at, deal:deals(client_name)")
     .eq("user_id", session.userId)
     .order("created_at", { ascending: false });
 
@@ -33,6 +34,7 @@ export default async function SalesCommissionsPage() {
     amount: Number(c.amount),
     status: c.status,
     paid_at: c.paid_at,
+    receipt_url: c.receipt_url,
     client: Array.isArray(c.deal) ? c.deal[0]?.client_name : c.deal?.client_name,
   }));
 
@@ -69,6 +71,7 @@ export default async function SalesCommissionsPage() {
                 <th className="px-4 py-2 font-medium">Importo</th>
                 <th className="px-4 py-2 font-medium">Stato</th>
                 <th className="px-4 py-2 font-medium">Pagata il</th>
+                <th className="px-4 py-2 font-medium">Ricevuta</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-line">
@@ -83,6 +86,20 @@ export default async function SalesCommissionsPage() {
                   </td>
                   <td className="px-4 py-2 text-xs text-faint">
                     {r.paid_at ? new Date(r.paid_at).toLocaleDateString("it-IT") : "—"}
+                  </td>
+                  <td className="px-4 py-2 text-xs">
+                    {r.receipt_url ? (
+                      <a
+                        href={r.receipt_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-muted underline-offset-2 hover:text-primary hover:underline"
+                      >
+                        Apri →
+                      </a>
+                    ) : (
+                      <span className="text-faint">—</span>
+                    )}
                   </td>
                 </tr>
               ))}
