@@ -21,7 +21,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <div className="flex min-h-screen min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-30 border-b border-line bg-surface/95 backdrop-blur">
           <div className="flex h-14 items-center gap-3 px-4 sm:px-6">
-            <MobileNav role={session.role} />
+            <MobileNav role={session.role} fullName={session.fullName} />
             <Link href={home} className="flex items-center gap-2 lg:hidden">
               <span className="text-sm font-semibold tracking-tight">{UI.appName}</span>
             </Link>
@@ -30,15 +30,18 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             </div>
             <div className="ml-auto flex items-center gap-2 sm:gap-3">
               <ReportButton />
-              <ThemeToggle />
-              <form action={logout}>
-                <button
-                  type="submit"
-                  className="rounded-md border border-line bg-surface px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-surface-2"
-                >
-                  {UI.nav.logout}
-                </button>
-              </form>
+              {/* Theme + logout live in the mobile drawer; shown here only on desktop */}
+              <div className="hidden items-center gap-3 lg:flex">
+                <ThemeToggle />
+                <form action={logout}>
+                  <button
+                    type="submit"
+                    className="rounded-md border border-line bg-surface px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-surface-2"
+                  >
+                    {UI.nav.logout}
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         </header>
